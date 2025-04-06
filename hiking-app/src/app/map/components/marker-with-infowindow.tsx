@@ -84,13 +84,14 @@ export function MarkerWithInfoWindow({
 
       {isCardOpen && (
         <InfoWindow position={position} onCloseClick={handleMarkerClick}>
-          <Box position="relative" bg="transparent" p={0} m={0} mt="-2">
+          <Box position="relative" bg="transparent" p={0} m={0}>
             <Box
               p={4}
               maxW="280px"
-              bg="gray.50"
+              bg="blue.50"
               borderRadius="lg"
               boxShadow="xl"
+              border="1px solid #3182ce"
               display="flex"
               flexDirection="column"
               gap={2}
@@ -114,7 +115,12 @@ export function MarkerWithInfoWindow({
                 </Link>
               )}
 
-              <Heading size="sm" fontSize="20" color="gray.600" fontWeight="bold">
+              <Heading
+                size="sm"
+                fontSize="20"
+                color="blue.700"
+                fontWeight="bold"
+              >
                 {event.title}
               </Heading>
 
