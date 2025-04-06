@@ -1,6 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Box, Button, Input, VStack, Heading, Field } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Input,
+  Heading,
+  Text,
+  Center,
+} from "@chakra-ui/react";
 import { createClient } from "../utils/supabase/client";
 
 type Category = { id: string; name: string };
@@ -36,7 +43,6 @@ export default function EventPage() {
     const picture = formData.get("picture") as string;
     const categoryId = (formData.get("category") as string) || null;
 
-    // Get current user
     const {
       data: { user },
       error: userError,
@@ -48,7 +54,7 @@ export default function EventPage() {
     }
 
     const host = user.id;
-    const time = new Date().toISOString(); // Or use a datetime picker if needed
+    const time = new Date().toISOString();
 
     const { error: insertError } = await supabase.from("events").insert([
       {
@@ -68,53 +74,124 @@ export default function EventPage() {
       console.error("Error inserting event:", insertError);
     } else {
       console.log("Event created successfully!");
-      // Optionally reset form or redirect
     }
   };
 
   return (
-    <Box
-      maxW="sm"
-      mx="auto"
-      mb={20}
-      mt={10}
-      p={6}
-      borderWidth={1}
-      borderRadius="lg"
-    >
-      <Heading mb={4} textAlign="center" size="md">
-        Submit Your Event Info
-      </Heading>
-      <form onSubmit={handleSubmit}>
-        <VStack gap={4}>
-          <Field.Root>
-            <Field.Label>Event Title</Field.Label>
-            <Input size="sm" name="title" />
-          </Field.Root>
-          <Field.Root>
-            <Field.Label>Location Longitude</Field.Label>
-            <Input size="sm" name="longitude" />
-          </Field.Root>
-          <Field.Root>
-            <Field.Label>Location Latitude</Field.Label>
-            <Input size="sm" name="latitude" />
-          </Field.Root>
-          <Field.Root>
-            <Field.Label>Description</Field.Label>
-            <Input size="sm" name="description" />
-          </Field.Root>
-          <Field.Root>
-            <Field.Label>Event Sponsor</Field.Label>
-            <Input size="sm" name="sponsor" />
-          </Field.Root>
-          <Field.Root>
-            <Field.Label>Picture! (URL)</Field.Label>
-            <Input size="sm" name="picture" />
-          </Field.Root>
+    <Center minH="100vh" bg="blue.50" px={4}>
+      <Box
+        bg="white"
+        p="32px"
+        borderRadius="xl"
+        boxShadow="xl"
+        width="100%"
+        maxW="400px"
+      >
+        <Heading fontSize="2xl" color="blue.700" mb={2} textAlign="center">
+          Submit Your Event Info
+        </Heading>
+        <Text fontSize="sm" color="gray.600" mb={6} textAlign="center">
+          Enter your event details and location.
+        </Text>
 
-          <Field.Root>
-            <Field.Label>Category</Field.Label>
-            <select name="category">
+        <form onSubmit={handleSubmit}>
+          <Box mb="16px">
+            <Text fontSize="sm" color="gray.600" mb="6px" fontWeight="medium">
+              Event Title:
+            </Text>
+            <Input
+              name="title"
+              type="text"
+              required
+              borderColor="blue.200"
+              _focus={{ borderColor: "blue.500", boxShadow: "none" }}
+            />
+          </Box>
+
+          <Box mb="16px">
+            <Text fontSize="sm" color="gray.600" mb="6px" fontWeight="medium">
+              Location Longitude:
+            </Text>
+            <Input
+              name="longitude"
+              type="text"
+              required
+              borderColor="blue.200"
+              _focus={{ borderColor: "blue.500", boxShadow: "none" }}
+            />
+          </Box>
+
+          <Box mb="16px">
+            <Text fontSize="sm" color="gray.600" mb="6px" fontWeight="medium">
+              Location Latitude:
+            </Text>
+            <Input
+              name="latitude"
+              type="text"
+              required
+              borderColor="blue.200"
+              _focus={{ borderColor: "blue.500", boxShadow: "none" }}
+            />
+          </Box>
+
+          <Box mb="16px">
+            <Text fontSize="sm" color="gray.600" mb="6px" fontWeight="medium">
+              Description:
+            </Text>
+            <Input
+              name="description"
+              type="text"
+              borderColor="blue.200"
+              _focus={{ borderColor: "blue.500", boxShadow: "none" }}
+            />
+          </Box>
+
+          <Box mb="16px">
+            <Text fontSize="sm" color="gray.600" mb="6px" fontWeight="medium">
+              Event Sponsor:
+            </Text>
+            <Input
+              name="sponsor"
+              type="text"
+              borderColor="blue.200"
+              _focus={{ borderColor: "blue.500", boxShadow: "none" }}
+            />
+          </Box>
+
+          <Box mb="16px">
+            <Text fontSize="sm" color="gray.600" mb="6px" fontWeight="medium">
+              Picture (URL):
+            </Text>
+            <Input
+              name="picture"
+              type="text"
+              borderColor="blue.200"
+              _focus={{ borderColor: "blue.500", boxShadow: "none" }}
+            />
+          </Box>
+
+          <Box mb="24px">
+            <Text fontSize="sm" color="gray.600" mb="6px" fontWeight="medium">
+              Category:
+            </Text>
+            <select
+              name="category"
+              required
+              style={{
+                width: "100%",
+                padding: "0.5rem",
+                fontSize: "0.875rem",
+                borderRadius: "6px",
+                border: "1px solid #bee3f8", // blue.200
+                outline: "none",
+              }}
+              onFocus={(e) =>
+                (e.currentTarget.style.border = "1px solid #3182ce")
+              }
+              onBlur={(e) =>
+                (e.currentTarget.style.border = "1px solid #bee3f8")
+              }
+            >
               <option value="">-- Select a category --</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
@@ -122,13 +199,23 @@ export default function EventPage() {
                 </option>
               ))}
             </select>
-          </Field.Root>
+          </Box>
 
-          <Button size="sm" type="submit" colorScheme="blue" width="full">
+          <Button
+            type="submit"
+            bg="blue.500"
+            color="white"
+            px="20px"
+            py="8px"
+            _hover={{ bg: "blue.600" }}
+            borderRadius="md"
+            fontWeight="medium"
+            width="100%"
+          >
             Submit
           </Button>
-        </VStack>
-      </form>
-    </Box>
+        </form>
+      </Box>
+    </Center>
   );
 }
