@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "../utils/supabase/client";
 import { type User } from "@supabase/supabase-js";
+import { Button, Card, Field, Input, Stack, Image, Center} from "@chakra-ui/react"
 
 import Avatar from "./avatar";
 
@@ -73,57 +74,63 @@ export default function EditProfileForm({ user }: { user: User | null }) {
   }
 
   return (
+    <Card.Root w = "360px">
+      <Card.Header textAlign="center">
+        <Card.Title>Your Profile</Card.Title>
+      </Card.Header>
+      <Card.Body>
+        <Stack gap="3" w="full">
     <div className="form-widget">
       <Avatar
         uid={user?.id ?? null}
         url={avatar_url}
-        size={150}
+        size={200}
         onUpload={(url) => {
           setAvatarUrl(url);
           updateProfile({ fullname, username, avatar_url: url });
         }}
       />
+    </div>
+         <Field.Root>
+            <Field.Label>Email</Field.Label>
+            <Input id="email" type="text" value={user?.email} disabled/>
+          </Field.Root>
 
-      <div>
-        <label htmlFor="email">Email</label>
-        <input id="email" type="text" value={user?.email} disabled />
-      </div>
-      <div>
-        <label htmlFor="fullName">Full Name</label>
-        <input
-          id="fullName"
+          <Field.Root>
+            <Field.Label>Full Name</Field.Label>
+            <Input id="fullName"
           type="text"
           value={fullname || ""}
-          onChange={(e) => setFullname(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="username">Username</label>
-        <input
-          id="username"
+          onChange={(e) => setFullname(e.target.value)}/>
+          </Field.Root>
+
+          <Field.Root>
+            <Field.Label>Username</Field.Label>
+            <Input id="username"
           type="text"
           value={username || ""}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <button
+          onChange={(e) => setUsername(e.target.value)}/>
+          </Field.Root>
+          <Card.Footer justifyContent="flex-end">
+        <form action="/auth/signout" method="post">
+          <Button 
+            className="button block" type="submit"
+            variant = "outline">
+            Sign out
+          </Button>
+        </form>
+        <Button
           className="button primary block"
           onClick={() => updateProfile({ fullname, username, avatar_url })}
           disabled={loading}
         >
           {loading ? "Loading ..." : "Update"}
-        </button>
-      </div>
-
-      <div>
-        <form action="/auth/signout" method="post">
-          <button className="button block" type="submit">
-            Sign out
-          </button>
-        </form>
-      </div>
-    </div>
-  );
+        </Button>
+      </Card.Footer>
+        </Stack>
+      </Card.Body>
+      
+    </Card.Root>
+  )
+  
 }

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { createClient } from "../utils/supabase/client";
 import Image from "next/image";
+import {Button, Center} from "@chakra-ui/react"
 
 export default function Avatar({
   uid,
@@ -69,6 +70,7 @@ export default function Avatar({
   };
 
   return (
+    <Center>
     <div>
       {avatarUrl ? (
         <Image
@@ -79,12 +81,14 @@ export default function Avatar({
           className="avatar image"
           style={{ height: size, width: size }}
         />
+        
       ) : (
         <div
           className="avatar no-image"
           style={{ height: size, width: size }}
         />
       )}
+      <Button size = "xs" variant={"outline"}>
       <div style={{ width: size }}>
         <label className="button primary block" htmlFor="single">
           {uploading ? "Uploading ..." : "Upload"}
@@ -101,6 +105,8 @@ export default function Avatar({
           disabled={uploading}
         />
       </div>
+      </Button>
     </div>
+    </Center>
   );
 }
