@@ -40,17 +40,23 @@ export default function MyEvents() {
   }, [supabase]);
 
   return (
-    <Center p="4">
-      <VStack pb="20">
-        {events.map(({ id, title, picture, description }) => (
-          <EventCard
-            key={id} // Use `id` as key for better uniqueness
-            title={title}
-            picture={picture}
-            description={description}
-          />
-        ))}
-      </VStack>
-    </Center>
+    <>
+      {events.length == 0 ? (
+        "You didn't host events yet"
+      ) : (
+        <Center p="4">
+          <VStack pb="20">
+            {events.map(({ id, title, picture, description }) => (
+              <EventCard
+                key={id} // Use `id` as key for better uniqueness
+                title={title}
+                picture={picture}
+                description={description}
+              />
+            ))}
+          </VStack>
+        </Center>
+      )}
+    </>
   );
 }
