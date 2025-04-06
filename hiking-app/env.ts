@@ -1,0 +1,6 @@
+export const env = {
+    GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAP_API!,
+    SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  };
+  
