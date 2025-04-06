@@ -1,4 +1,4 @@
 export const center = {
-    lat: 49.2827,
-    lng: -123.1207,
+    lng: -123.1417,
+    lat: 49.3017,
 };

@@ -17,6 +17,7 @@ export function MarkerWithInfoWindow({
 }: MarkerWithInfoWindowProps) {
   return (
     <AdvancedMarker position={{ lat: event.latitude, lng: event.longitude }} onClick={handleMarkerClick}>
+       <div style={{ backgroundColor: "red", width: "12px", height: "12px", borderRadius: "50%" }} />
       {isCardOpen && (
         <InfoWindow>
           <Box p={2}>
@@ -24,7 +25,7 @@ export function MarkerWithInfoWindow({
               {event.title}
             </Heading>
             <Text fontSize="xs" color="gray.500">
-              Time: {event.time.toLocaleString()}
+              Time: {new Date(event.time).toLocaleString()}
             </Text>
           </Box>
         </InfoWindow>

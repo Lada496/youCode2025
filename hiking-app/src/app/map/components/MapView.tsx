@@ -41,14 +41,22 @@ export function MapView({ events }: MapViewProps) {
           disableDefaultUI
           onClick={handleCloseInfoWindow}
         >
-          {events.map((event) => (
-            <MarkerWithInfoWindow
-              key={event.title}
-              event={event}
-              isCardOpen={openInfoWindowId === event.title}
-              handleMarkerClick={() => setOpenInfoWindowId(event.title)}
-            />
-          ))}
+          {events.map((event) => {
+            console.log(
+              "Rendering marker:",
+              event.title,
+              event.latitude,
+              event.longitude
+            );
+            return (
+              <MarkerWithInfoWindow
+                key={event.title}
+                event={event}
+                isCardOpen={openInfoWindowId === event.title}
+                handleMarkerClick={() => setOpenInfoWindowId(event.title)}
+              />
+            );
+          })}
         </GoogleMap>
       </APIProvider>
     </div>

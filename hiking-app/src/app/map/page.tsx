@@ -1,3 +1,5 @@
+"use client";
+
 import { MapView } from "./components/MapView";
 import { events } from "./eventinfo"; 
 
