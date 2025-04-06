@@ -51,7 +51,7 @@ export default function MapView({ events }: MapViewProps) {
             );
             return (
               <MarkerWithInfoWindow
-                key={event.title}
+                key={event.id}
                 event={event}
                 isCardOpen={openInfoWindowId === event.title}
                 handleMarkerClick={() => setOpenInfoWindowId(event.title)}
