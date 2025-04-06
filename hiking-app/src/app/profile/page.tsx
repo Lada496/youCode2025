@@ -2,6 +2,8 @@ import EditProfileForm from "./components/edit-profile-form";
 import { Profile } from "./components/profile";
 import { createClient } from "../utils/supabase/server";
 import { Center, Tabs, Box, Flex } from "@chakra-ui/react";
+import AllEvents from "./components/all-events";
+import MyEvents from "./components/my-events";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
@@ -52,8 +54,12 @@ export default async function ProfilePage(props: {
           </Flex>
         </Box>
       </Tabs.List>
-      <Tabs.Content value="upcoming">Upcoming events</Tabs.Content>
-      <Tabs.Content value="yours">Your events</Tabs.Content>
+      <Tabs.Content value="upcoming">
+        <AllEvents />
+      </Tabs.Content>
+      <Tabs.Content value="yours">
+        <MyEvents />
+      </Tabs.Content>
       <Tabs.Content value="past">Past events</Tabs.Content>
       <Tabs.Content value="profile">
         <Center>
