@@ -1,8 +1,9 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { createClient } from "../utils/supabase/client";
+import { useRouter } from "next/navigation";
+import { createClient } from "../../utils/supabase/client";
 import { type User } from "@supabase/supabase-js";
-import { Button, Card, Field, Input, Stack, Image, Center} from "@chakra-ui/react"
+import { Button, Card, Field, Input, Stack } from "@chakra-ui/react";
 
 import Avatar from "./avatar";
 
@@ -14,6 +15,7 @@ export default function EditProfileForm({ user }: { user: User | null }) {
   const [fullname, setFullname] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [avatar_url, setAvatarUrl] = useState<string | null>(null);
+  const router = useRouter();
 
   const getProfile = useCallback(async () => {
     try {
@@ -66,71 +68,81 @@ export default function EditProfileForm({ user }: { user: User | null }) {
       });
       if (error) throw error;
       alert("Profile updated!");
+      setLoading(false);
+      router.push("/profile");
     } catch (error) {
       alert("Error updating the data!");
-    } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Card.Root w = "360px">
+    <Card.Root w="360px" p="4" mt="4">
       <Card.Header textAlign="center">
-        <Card.Title>Your Profile</Card.Title>
+        <Card.Title color="blue.500">Your Profile</Card.Title>
       </Card.Header>
       <Card.Body>
         <Stack gap="3" w="full">
-    <div className="form-widget">
-      <Avatar
-        uid={user?.id ?? null}
-        url={avatar_url}
-        size={200}
-        onUpload={(url) => {
-          setAvatarUrl(url);
-          updateProfile({ fullname, username, avatar_url: url });
-        }}
-      />
-    </div>
-         <Field.Root>
+          <div className="form-widget">
+            <Avatar
+              uid={user?.id ?? null}
+              url={avatar_url}
+              size={200}
+              onUpload={(url) => {
+                setAvatarUrl(url);
+                updateProfile({ fullname, username, avatar_url: url });
+              }}
+            />
+          </div>
+          <Field.Root>
             <Field.Label>Email</Field.Label>
-            <Input id="email" type="text" value={user?.email} disabled/>
+            <Input id="email" type="text" value={user?.email} disabled pl="4" />
           </Field.Root>
 
           <Field.Root>
             <Field.Label>Full Name</Field.Label>
-            <Input id="fullName"
-          type="text"
-          value={fullname || ""}
-          onChange={(e) => setFullname(e.target.value)}/>
+            <Input
+              id="fullName"
+              type="text"
+              value={fullname || ""}
+              onChange={(e) => setFullname(e.target.value)}
+              pl="4"
+            />
           </Field.Root>
 
           <Field.Root>
             <Field.Label>Username</Field.Label>
-            <Input id="username"
-          type="text"
-          value={username || ""}
-          onChange={(e) => setUsername(e.target.value)}/>
+            <Input
+              id="username"
+              type="text"
+              value={username || ""}
+              onChange={(e) => setUsername(e.target.value)}
+              pl="4"
+            />
           </Field.Root>
           <Card.Footer justifyContent="flex-end">
-        <form action="/auth/signout" method="post">
-          <Button 
-            className="button block" type="submit"
-            variant = "outline">
-            Sign out
-          </Button>
-        </form>
-        <Button
-          className="button primary block"
-          onClick={() => updateProfile({ fullname, username, avatar_url })}
-          disabled={loading}
-        >
-          {loading ? "Loading ..." : "Update"}
-        </Button>
-      </Card.Footer>
+            <form action="/auth/signout" method="post">
+              <Button
+                className="button block"
+                type="submit"
+                variant="outline"
+                p="4"
+              >
+                Sign out
+              </Button>
+            </form>
+            <Button
+              colorPalette="blue"
+              className="button primary block"
+              onClick={() => updateProfile({ fullname, username, avatar_url })}
+              disabled={loading}
+              p="4"
+            >
+              {loading ? "Loading ..." : "Update"}
+            </Button>
+          </Card.Footer>
         </Stack>
       </Card.Body>
-      
     </Card.Root>
-  )
-  
+  );
 }
