@@ -11,7 +11,7 @@ const EventCard = ({ title, description, picture }: EventProps) => {
     <Card.Root width="320px">
       <Card.Body gap="2">
         <Avatar.Root size="lg" shape="rounded">
-          <Avatar.Image src={picture} />
+          {!!picture && <Avatar.Image src={picture} />}
           <Avatar.Fallback name="Post run sunset hangout" />
         </Avatar.Root>
         <Card.Title mt="2">{title}</Card.Title>

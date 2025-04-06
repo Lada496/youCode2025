@@ -23,6 +23,9 @@ export default function Navbar() {
       <Text mx="4">
         <Link href="/map">Map</Link>
       </Text>
+      <Text mx="4">
+        <Link href="/event">Add Event</Link>
+      </Text>
     </Box>
   );
 }
