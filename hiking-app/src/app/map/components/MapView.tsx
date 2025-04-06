@@ -12,6 +12,7 @@ interface MapViewProps {
 }
 
 export default function MapView({ events }: MapViewProps) {
+  console.log({ events });
   const [openInfoWindowId, setOpenInfoWindowId] = useState<string | null>(null);
 
   const handleCloseInfoWindow = () => {
