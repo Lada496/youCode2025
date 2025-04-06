@@ -1,15 +1,14 @@
 "use client";
 import { useState } from "react";
 import {
+  Box,
   Button,
-  Card,
-  Field,
   Input,
-  Stack,
-  Center,
   Text,
-  HStack,
+  Center,
   VStack,
+  HStack,
+  Flex,
 } from "@chakra-ui/react";
 
 interface FormProps {
@@ -18,77 +17,94 @@ interface FormProps {
 }
 
 export default function Form({ loginHandler, signupHandler }: FormProps) {
-  const [isLogin, setIsLogin] = useState<boolean>(false);
-  return (
-    <Center mt="10">
-      <VStack>
-        <Card.Root maxW="sm" p="4">
-          <form>
-            <Card.Header>
-              <Card.Title>Sign up</Card.Title>
-              <Card.Description>
-                Fill in the form below to create an account
-              </Card.Description>
-            </Card.Header>
+  const [isLogin, setIsLogin] = useState(false);
 
-            <Card.Body>
-              <Stack gap="4" w="full">
-                <Field.Root>
-                  <Field.Label htmlFor="email">Email:</Field.Label>
-                  <Input id="email" name="email" type="email" required />
-                </Field.Root>
-                <Field.Root>
-                  <Field.Label htmlFor="password">Password:</Field.Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                  />
-                </Field.Root>
-              </Stack>
-            </Card.Body>
-            <Card.Footer justifyContent="flex-end" pt="4">
-              {isLogin ? (
-                <Button
-                  type="submit"
-                  variant="outline"
-                  pl="4"
-                  pr="4"
-                  formAction={loginHandler}
-                >
-                  Log in
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  variant="solid"
-                  pl="4"
-                  pr="4"
-                  formAction={signupHandler}
-                >
-                  Sign up
-                </Button>
-              )}
-            </Card.Footer>
-          </form>
-        </Card.Root>
-        {isLogin ? (
-          <HStack>
-            <Text textStyle="sm">Do you need a new account?</Text>
-            <Button variant="ghost" p="4" onClick={() => setIsLogin(false)}>
-              Signup
+  return (
+    <Center minH="100vh" bg="blue.50" px={4}>
+      <Box
+        bg="white"
+        p="32px"
+        borderRadius="xl"
+        boxShadow="xl"
+        width="100%"
+        maxW="400px"
+      >
+        <form>
+          <Text fontSize="2xl" fontWeight="bold" color="blue.700" mb="8px">
+            {isLogin ? "Log in" : "Sign up"}
+          </Text>
+
+          <Text fontSize="sm" color="gray.600" mb="24px">
+            {isLogin
+              ? "Welcome back! Enter your credentials to log in."
+              : "Fill in the form below to create an account."}
+          </Text>
+
+          <Box mb="20px">
+            <Text fontSize="sm" color="gray.600" mb="6px" fontWeight="medium">
+              Email:
+            </Text>
+            <Input
+              name="email"
+              type="email"
+              required
+              borderColor="blue.200"
+              _focus={{ borderColor: "blue.500", boxShadow: "none" }}
+            />
+          </Box>
+
+          <Box mb="24px">
+            <Text fontSize="sm" color="gray.600" mb="6px" fontWeight="medium">
+              Password:
+            </Text>
+            <Input
+              name="password"
+              type="password"
+              required
+              borderColor="blue.200"
+              _focus={{ borderColor: "blue.500", boxShadow: "none" }}
+            />
+          </Box>
+
+          <Flex justify="flex-end">
+            <Button
+              type="submit"
+              onClick={(e) => {
+                e.preventDefault();
+              }}
+              formAction={isLogin ? loginHandler : signupHandler}
+              bg="blue.500"
+              color="white"
+              px="20px"
+              py="8px"
+              _hover={{ bg: "blue.600" }}
+              borderRadius="md"
+              fontWeight="medium"
+            >
+              {isLogin ? "Log in" : "Sign up"}
             </Button>
-          </HStack>
-        ) : (
-          <HStack>
-            <Text textStyle="sm">Do you already have account?</Text>
-            <Button variant="ghost" p="4" onClick={() => setIsLogin(true)}>
-              Login
-            </Button>
-          </HStack>
-        )}
-      </VStack>
+          </Flex>
+        </form>
+
+        <HStack mt="28px" justify="center">
+          <Text fontSize="sm" color="gray.600">
+            {isLogin
+              ? "Need a new account?"
+              : "Do you already have an account?"}
+          </Text>
+          <Button
+            onClick={() => setIsLogin(!isLogin)}
+            fontSize="sm"
+            height="auto"
+            padding="0"
+            color="blue.500"
+            fontWeight="medium"
+
+          >
+            {isLogin ? "Sign up" : "Log in"}
+          </Button>
+        </HStack>
+      </Box>
     </Center>
   );
 }
