@@ -25,6 +25,7 @@ export const Profile = ({ user }: { user: User | null }) => {
   const [username, setUsername] = useState<string | null>(null);
   const [avatar_url, setAvatarUrl] = useState<string | null>(null);
   const [url, setUrl] = useState<string | null>(null);
+  const [numEvents, setNumEvents] = useState<number | null>(null);
 
   const getProfile = useCallback(async () => {
     try {
@@ -32,7 +33,7 @@ export const Profile = ({ user }: { user: User | null }) => {
 
       const { data, error, status } = await supabase
         .from("profiles")
-        .select(`full_name, username, avatar_url`)
+        .select(`full_name, username, avatar_url, num_events`)
         .eq("id", user?.id)
         .single();
 
@@ -45,6 +46,7 @@ export const Profile = ({ user }: { user: User | null }) => {
         setFullname(data.full_name);
         setUsername(data.username);
         setAvatarUrl(data.avatar_url);
+        setNumEvents(data.num_events ?? 0);
       }
     } catch (error) {
       alert("Error loading user data!");
@@ -100,6 +102,10 @@ export const Profile = ({ user }: { user: User | null }) => {
               <Card.Description>
                 <Strong color="fg">Category: </Strong>
                 hiking
+              </Card.Description>
+              <Card.Description>
+                <Strong color="fg">Events Attended: </Strong>
+                {numEvents ?? "Loading..."}
               </Card.Description>
             </Card.Body>
             <Card.Footer>
