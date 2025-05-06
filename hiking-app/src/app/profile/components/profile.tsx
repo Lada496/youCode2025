@@ -26,14 +26,22 @@ export const Profile = ({ user }: { user: User | null }) => {
   const [avatar_url, setAvatarUrl] = useState<string | null>(null);
   const [url, setUrl] = useState<string | null>(null);
   const [numEvents, setNumEvents] = useState<number | null>(null);
+  const [categoryLabel, setCategoryLabel] = useState<string | null>(null);
 
   const getProfile = useCallback(async () => {
     try {
       setLoading(true);
 
+      if (!user?.email_confirmed_at) {
+        alert("Please verify your email before editing your profile.");
+        setLoading(false);
+        return; // Stop here if not verified
+      }
+
+      // Fetch profile with category
       const { data, error, status } = await supabase
         .from("profiles")
-        .select(`full_name, username, avatar_url, num_events`)
+        .select(`full_name, username, avatar_url, categories(name)`)
         .eq("id", user?.id)
         .single();
 
@@ -42,12 +50,27 @@ export const Profile = ({ user }: { user: User | null }) => {
         throw error;
       }
 
+      const category = data?.categories as unknown as { name: string } | null;
+
       if (data) {
         setFullname(data.full_name);
         setUsername(data.username);
         setAvatarUrl(data.avatar_url);
-        setNumEvents(data.num_events ?? 0);
+        setCategoryLabel(category?.name || "No category selected");
       }
+
+      // Fetch number of attended events from user_events
+      const { count, error: countError } = await supabase
+        .from("user_events")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user?.id);
+
+      if (countError) {
+        console.log(countError);
+        throw countError;
+      }
+
+      setNumEvents(count ?? 0);
     } catch (error) {
       alert("Error loading user data!");
     } finally {
@@ -101,7 +124,7 @@ export const Profile = ({ user }: { user: User | null }) => {
               </Card.Description>
               <Card.Description>
                 <Strong color="fg">Category: </Strong>
-                hiking
+                {categoryLabel ?? "Loading..."}
               </Card.Description>
               <Card.Description>
                 <Strong color="fg">Events Attended: </Strong>

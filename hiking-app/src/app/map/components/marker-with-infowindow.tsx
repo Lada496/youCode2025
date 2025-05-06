@@ -4,7 +4,8 @@ import { AdvancedMarker, InfoWindow } from "@vis.gl/react-google-maps";
 import { Box, Heading, Text, Image, Link, Button } from "@chakra-ui/react";
 import type { Event } from "../eventinfo";
 import { createClient } from "@/app/utils/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { IoIosPin } from "react-icons/io";
 
 interface MarkerWithInfoWindowProps {
   event: Event;
@@ -20,6 +21,7 @@ export function MarkerWithInfoWindow({
   const position = { lat: event.latitude, lng: event.longitude };
   const supabase = createClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasAttended, setHasAttended] = useState(false);
 
   const handleAttend = async () => {
     setIsSubmitting(true);
@@ -35,27 +37,28 @@ export function MarkerWithInfoWindow({
       return;
     }
 
-    const { data, error: fetchError } = await supabase
-      .from("profiles")
-      .select("num_events")
-      .eq("id", user.id)
+    // Check if user already attended
+    const { data: existing, error: existingError } = await supabase
+      .from("user_events")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("event_id", event.id)
       .single();
 
-    if (fetchError || !data) {
-      alert("Failed to fetch current event count.");
+    if (existing) {
+      alert("You already marked attendance for this event.");
       setIsSubmitting(false);
       return;
     }
 
-    const currentCount = data.num_events ?? 0;
+    const { error: insertError } = await supabase.from("user_events").insert({
+      user_id: user.id,
+      event_id: event.id,
+      visited_at: new Date().toISOString(),
+    });
 
-    const { error: updateError } = await supabase
-      .from("profiles")
-      .update({ num_events: currentCount + 1 })
-      .eq("id", user.id);
-
-    if (updateError) {
-      alert("Error updating event count.");
+    if (insertError) {
+      alert("Error recording attendance.");
     } else {
       alert("Your attendance was recorded! 🎉");
     }
@@ -63,21 +66,47 @@ export function MarkerWithInfoWindow({
     setIsSubmitting(false);
   };
 
+  const checkAttendance = async () => {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      return;
+    }
+
+    const { data: existing } = await supabase
+      .from("user_events")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("event_id", event.id)
+      .single();
+
+    if (existing) {
+      setHasAttended(true);
+    } else {
+      setHasAttended(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isCardOpen) {
+      checkAttendance();
+    }
+  }, [isCardOpen]);
+
   return (
     <>
       <AdvancedMarker position={position}>
-        <div
+        <IoIosPin
+          size={30}
+          color="green"
+          style={{ cursor: "pointer" }}
           onClick={(e) => {
             e.stopPropagation();
             console.log("Clicked marker for:", event.title);
             handleMarkerClick();
-          }}
-          style={{
-            backgroundColor: "green",
-            width: "20px",
-            height: "20px",
-            borderRadius: "50%",
-            cursor: "pointer",
           }}
         />
       </AdvancedMarker>
@@ -114,7 +143,12 @@ export function MarkerWithInfoWindow({
                 </Link>
               )}
 
-              <Heading size="sm" fontSize="20" color="gray.600" fontWeight="bold">
+              <Heading
+                size="sm"
+                fontSize="20"
+                color="gray.600"
+                fontWeight="bold"
+              >
                 {event.title}
               </Heading>
 
@@ -132,21 +166,27 @@ export function MarkerWithInfoWindow({
                 </Text>
               )}
 
-              <Button
-                bg="blue.500"
-                color="white"
-                _hover={{ bg: "blue.600" }}
-                size="sm"
-                loading={isSubmitting}
-                onClick={handleAttend}
-                mt={2}
-                px={4}
-                py={2}
-                borderRadius="md"
-                fontWeight="medium"
-              >
-                Attended!
-              </Button>
+              {hasAttended ? (
+                <Text fontSize="sm" mt={2}>
+                  ✅ You already attended this event!
+                </Text>
+              ) : (
+                <Button
+                  bg="blue.500"
+                  color="white"
+                  _hover={{ bg: "blue.600" }}
+                  size="sm"
+                  loading={isSubmitting}
+                  onClick={handleAttend}
+                  mt={2}
+                  px={4}
+                  py={2}
+                  borderRadius="md"
+                  fontWeight="medium"
+                >
+                  Attended!
+                </Button>
+              )}
             </Box>
           </Box>
         </InfoWindow>
