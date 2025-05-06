@@ -26,6 +26,7 @@ export default function EventPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
     const formData = new FormData(e.currentTarget);
 
     const title = formData.get("title") as string;
@@ -48,7 +49,7 @@ export default function EventPage() {
     }
 
     const host = user.id;
-    const time = new Date().toISOString(); // Or use a datetime picker if needed
+    const time = new Date().toISOString();
 
     const { error: insertError } = await supabase.from("events").insert([
       {
@@ -65,10 +66,31 @@ export default function EventPage() {
     ]);
 
     if (insertError) {
-      console.error("Error inserting event:", insertError);
+      alert("Error inserting event:");
+      console.error(insertError)
     } else {
-      console.log("Event created successfully!");
-      // Optionally reset form or redirect
+      alert("Event created successfully!");
+
+      if (categoryId) {
+        const res = await fetch("/api/notify-users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            category_id: categoryId,
+            event_title: title,
+          }),
+        });
+
+        if (res.ok) {
+          console.log("Notification emails sent!");
+        } else {
+          console.error("Failed to send notifications");
+        }
+      }
+
+      form.reset();
     }
   };
 
