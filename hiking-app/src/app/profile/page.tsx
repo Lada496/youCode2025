@@ -1,7 +1,7 @@
 import EditProfileForm from "./components/edit-profile-form";
 import { Profile } from "./components/profile";
 import { createClient } from "../utils/supabase/server";
-import { Center, Tabs, Box, Flex } from "@chakra-ui/react";
+import { Center, Tabs, Box, Flex, Text } from "@chakra-ui/react";
 import AllEvents from "./components/all-events";
 import MyEvents from "./components/my-events";
 
@@ -17,6 +17,8 @@ export default async function ProfilePage(props: {
   const searchParams = await props.searchParams;
   const query = searchParams.edit;
   const isEdit = query && query === "true";
+
+  const isEmailVerified = !!user?.email_confirmed_at;
 
   return (
     <Tabs.Root defaultValue="upcoming">
@@ -62,7 +64,20 @@ export default async function ProfilePage(props: {
       </Tabs.Content>
       <Tabs.Content value="past">Past events</Tabs.Content>
       <Tabs.Content value="profile">
-        <Center>
+        <Center flexDirection="column">
+          {!isEmailVerified && (
+            <Box
+              background="yellow.200"
+              padding="4"
+              borderRadius="md"
+              mb="4"
+              mt="4"
+            >
+              <Text color="yellow.800" fontWeight="bold">
+                ⚡ Please verify your email to access all features.
+              </Text>
+            </Box>
+          )}
           {isEdit ? <EditProfileForm user={user} /> : <Profile user={user} />}
         </Center>
       </Tabs.Content>

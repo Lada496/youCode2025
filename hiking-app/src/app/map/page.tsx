@@ -58,7 +58,6 @@ export default function MapPage() {
         console.error("Error fetching events:", error.message);
       } else {
         const mappedEvents = data.map((event: Event) => {
-          console.log({ event }, "here");
           return {
             id: event.id,
             title: event.title,
@@ -80,7 +79,6 @@ export default function MapPage() {
 
   return (
     <div>
-      Map Page
       <MapView events={events} />
     </div>
   );
